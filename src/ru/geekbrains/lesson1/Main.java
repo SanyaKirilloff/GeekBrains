@@ -1,70 +1,100 @@
 package ru.geekbrains.lesson1;
 
+import java.util.Random;
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
-        byte byte1 = 1;
-        short short1 = 10;
-        int int1 = 50;
-        long long1 = 100000L;
-        float float1 = 12.22f;
-        double double1 = 23.23;
-        char char1 = '*';
-        boolean boolean1 = true;
 
-        System.out.println("Результат вычисления: " + expressionResult(32.2f, 10.3f, 49.3f, 5.33f));
+    System.out.println("1 - угадываем номер, 2 - угадываем слово.");
+        switch (getNumberFromConsole()) {
+        case 1:
+            guessNumber();
+            break;
+        case 2:
+            guessTheWord();
+            break;
+    }
+}
+    static void guessNumber() {
+        Random random = new Random();
+        do {
+            int expectedNumber = random.nextInt(10);
 
-        System.out.println(isSumBetween10And20(0, 11));
+            for (int i = 2; i >= 0; i--) {
+                int userNumber;
+                do {
+                    System.out.println("Введите число от 0 до 9");
+                    userNumber = getNumberFromConsole();
+                }
+                while (!(0 <= userNumber && userNumber <=9));
 
-        int z = -3;
-        isNumberPositiveOrNegative(-3);
-
-        System.out.println(isNumber2PositiveOrNegative(25));
-
-        String name = "Amanda";
-        System.out.println("Привет " + name + "!");
-
-        int year = 2021;
-        isYearLeapOrUsual(2021);
+                if (userNumber == expectedNumber) {
+                    System.out.println("Вы угадали!");
+                    break;
+                }
+                System.out.println("У вас осталось попыток: " + i);
+            }
+            System.out.println("Продолжить угадывать? (1 - да/0 - нет");
+        }
+        while (getNumberFromConsole() != 0);
     }
 
-    public static float expressionResult (float a, float b, float c, float d) {
-        return a * (b + (c / d));
+    static int getNumberFromConsole() {
+        Scanner scanner = new Scanner(System.in);
+        do {
+            if (scanner.hasNextInt()) {
+                return scanner.nextInt();
+            }
+            System.out.println("Введите целое число!");
+            scanner.nextInt();
+        }
+        while (true);
     }
 
-    public static boolean isSumBetween10And20 (int x, int y) {
-        int sum = x + y;
-        boolean res = sum >10 && sum <= 20;
-        return res;
+    public static void guessTheWord() {
+        Random random = new Random();
+
+        String[] words = {
+                "apple", "orange", "lemon", "banana", "apricot", "avocado",
+                "broccoli", "carrot", "cherry", "garlic", "grape", "melon",
+                "leak", "kiwi", "mango", "mushroom", "nut", "olive", "pea",
+                "peanut", "pear", "pepper", "pineapple", "pumpkin", "potato"
+        };
+
+        int expectedWordIndex = random.nextInt(words.length);
+        String expectedWord = words[expectedWordIndex];
+        System.out.println("Загадано: " + expectedWord);
+
+        String userWord;
+        Scanner scanner = new Scanner(System.in);
+        do {
+            userWord = scanner.nextLine();
+
+            if (userWord.equals(expectedWord)) {
+                System.out.println("Слово угадано!");
+            }
+            else {
+                doAdvise (userWord, expectedWord);
+            }
+        }
+        while (!(userWord.equals(expectedWord)));
     }
 
-    public static void isNumberPositiveOrNegative (int z) {
-        if (z >= 0) {
-            System.out.println("Введенное число " + z + " положительное.");
+    static void doAdvise(String userWord, String expectedWord) {
+        String advise = "";
+        for (int i = 0; i < 15; i++) {
+            if (i >= userWord.length() || i >= expectedWord.length()) {
+                advise += "#";
+            }
+            else if (userWord.charAt(i) == expectedWord.charAt(i)) {
+                advise += userWord.charAt(i);
+            }
+            else {
+                advise += "#";
+            }
         }
-        else {
-            System.out.println("Введенное число " + z + " отрицательное.");
-        }
-    }
-
-    public static boolean isNumber2PositiveOrNegative (int w) {
-        if (w < 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    public static void printName (String name) {
-    }
-
-    public static void isYearLeapOrUsual (int year) {
-        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
-            System.out.println("Введенный год " + year + " является високосным");
-        }
-        else {
-            System.out.println("Введенный год " + year + " не является високосным");
-        }
+        System.out.println(advise);
     }
 }
