@@ -4,97 +4,175 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
+    public static char[][] map;
+    public static final int SIZE = 5;
+    public static final int DOTS_TO_WIN = 5;
+    public static final char DOT_EMPTY = '.';
+    public static final char DOT_X = 'X';
+    public static final char DOT_0 = '0';
+    public static Scanner sc = new Scanner(System.in);
+    public static Random rand = new Random();
 
     public static void main(String[] args) {
-
-    System.out.println("1 - угадываем номер, 2 - угадываем слово.");
-        switch (getNumberFromConsole()) {
-        case 1:
-            guessNumber();
-            break;
-        case 2:
-            guessTheWord();
-            break;
-    }
-}
-    static void guessNumber() {
-        Random random = new Random();
-        do {
-            int expectedNumber = random.nextInt(10);
-
-            for (int i = 2; i >= 0; i--) {
-                int userNumber;
-                do {
-                    System.out.println("Введите число от 0 до 9");
-                    userNumber = getNumberFromConsole();
-                }
-                while (!(0 <= userNumber && userNumber <=9));
-
-                if (userNumber == expectedNumber) {
-                    System.out.println("Вы угадали!");
-                    break;
-                }
-                System.out.println("У вас осталось попыток: " + i);
+        initMap();
+        printMap();
+        while (true) {
+            humanTurn();
+            printMap();
+            if (checkWin(DOT_X)) {
+                System.out.println("Победил человек");
+                break;
             }
-            System.out.println("Продолжить угадывать? (1 - да/0 - нет");
-        }
-        while (getNumberFromConsole() != 0);
-    }
-
-    static int getNumberFromConsole() {
-        Scanner scanner = new Scanner(System.in);
-        do {
-            if (scanner.hasNextInt()) {
-                return scanner.nextInt();
+            if (isMapFull()) {
+                System.out.println("Ничья");
+                break;
             }
-            System.out.println("Введите целое число!");
-            scanner.nextInt();
+            aiTUrn();
+            printMap();
+            if (checkWin(DOT_0)) {
+                System.out.println("Победил компьютер");
+                break;
+            }
+            if (isMapFull()) {
+                System.out.println("Ничья");
+                break;
+            }
         }
-        while (true);
+        System.out.println("Игра окончена");
     }
 
-    public static void guessTheWord() {
-        Random random = new Random();
+    public static void initMap() {
+        map = new char[SIZE][SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                map[i][j] = DOT_EMPTY;
+            }
+        }
+    }
 
-        String[] words = {
-                "apple", "orange", "lemon", "banana", "apricot", "avocado",
-                "broccoli", "carrot", "cherry", "garlic", "grape", "melon",
-                "leak", "kiwi", "mango", "mushroom", "nut", "olive", "pea",
-                "peanut", "pear", "pepper", "pineapple", "pumpkin", "potato"
-        };
+    public static void printMap() {
+        for (int i = 0; i <= SIZE; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+        for (int i = 0; i < SIZE; i++) {
+            System.out.print((i + 1) + " ");
+            for (int j = 0; j < SIZE; j++) {
+                System.out.print(map[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
 
-        int expectedWordIndex = random.nextInt(words.length);
-        String expectedWord = words[expectedWordIndex];
-        System.out.println("Загадано: " + expectedWord);
-
-        String userWord;
-        Scanner scanner = new Scanner(System.in);
+    public static void humanTurn() {
+        int x, y;
         do {
-            userWord = scanner.nextLine();
+            System.out.println("Введите координаты X Y");
+            x = sc.nextInt() - 1;
+            y = sc.nextInt() - 1;
+        } while (!isCellValid(x, y));
+        map[y][x] = DOT_X;
+    }
 
-            if (userWord.equals(expectedWord)) {
-                System.out.println("Слово угадано!");
+    public static boolean isCellValid(int x, int y) {
+        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return false;
+        if (map[y][x] == DOT_EMPTY) return true;
+        return false;
+        }
+
+    static boolean isWinner(char symb){
+        int endOfOffset = map.length - DOTS_TO_WIN;
+        for (int rowOffset = 0; rowOffset <= endOfOffset; rowOffset++) {
+            if (idDiagonalsFilledWith(symb, rowOffset)) {
+                return true;
+            }
+            for (int columnOffset = 0; columnOffset <= endOfOffset; columnOffset++) {
+                boolean hasWin = isLinesFilledWith(symb, columnOffset, rowOffset);
+                if (hasWin) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static boolean isLinesFilledWith(char symb, int rowOffset, int columnOffset) {
+        for (int row = rowOffset; row < (DOTS_TO_WIN - rowOffset); row++) {
+            int horizontalWinCounter = 0;
+            int verticalWinCounter = 0;
+            for (int column = columnOffset; column < (DOTS_TO_WIN + columnOffset); column++) {
+                if (map[row][column] == symb) {
+                    horizontalWinCounter++;
+                }
+                else {
+                    horizontalWinCounter = 0;
+                }
+                if (map[column][row] == symb) {
+                    verticalWinCounter++;
+                }
+                else {
+                    verticalWinCounter = 0;
+                }
+            }
+            if ((horizontalWinCounter == DOTS_TO_WIN) || (verticalWinCounter == DOTS_TO_WIN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean idDiagonalsFilledWith(char symb, int rowOffset) {
+        int mainDiagonalCounter = 0;
+        int sideDiagonalCounter = 0;
+
+        final int subSquareLength = (DOTS_TO_WIN + rowOffset);
+
+        for (int row = rowOffset; row < subSquareLength; row++) {
+            if (map[row][row] == symb) {
+                mainDiagonalCounter++;
             }
             else {
-                doAdvise (userWord, expectedWord);
+                mainDiagonalCounter = 0;
             }
-        }
-        while (!(userWord.equals(expectedWord)));
-    }
-
-    static void doAdvise(String userWord, String expectedWord) {
-        String advise = "";
-        for (int i = 0; i < 15; i++) {
-            if (i >= userWord.length() || i >= expectedWord.length()) {
-                advise += "#";
-            }
-            else if (userWord.charAt(i) == expectedWord.charAt(i)) {
-                advise += userWord.charAt(i);
+            if (map[row][map.length -1 - row] == symb) {
+                sideDiagonalCounter++;
             }
             else {
-                advise += "#";
+                sideDiagonalCounter = 0;
             }
         }
-        System.out.println(advise);
+        return (mainDiagonalCounter == DOTS_TO_WIN) || (sideDiagonalCounter == DOTS_TO_WIN);
+    }
+
+    public static void aiTUrn() {
+        int x, y;
+        do {
+            x = rand.nextInt(SIZE);
+            y = rand.nextInt(SIZE);
+        } while (!isCellValid(x, y));
+        System.out.println("Компьютер походил в точку: " + (x + 1 ) + " " + (y + 1));
+        map[y][x] = DOT_0;
+    }
+
+    public static boolean checkWin(char symb) {
+        if (map[0][0] == symb && map[0][1] == symb && map[0][2] == symb) return true;
+        if (map[1][0] == symb && map[1][1] == symb && map[1][2] == symb) return true;
+        if (map[2][0] == symb && map[2][1] == symb && map[2][2] == symb) return true;
+        if (map[0][0] == symb && map[1][0] == symb && map[2][0] == symb) return true;
+        if (map[0][1] == symb && map[1][1] == symb && map[2][1] == symb) return true;
+        if (map[0][2] == symb && map[1][2] == symb && map[2][2] == symb) return true;
+        if (map[0][0] == symb && map[1][1] == symb && map[2][2] == symb) return true;
+        if (map[2][0] == symb && map[1][1] == symb && map[0][2] == symb) return true;
+        return false;
+    }
+
+    public static boolean isMapFull() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (map[i][j] == DOT_EMPTY) return false;
+            }
+        }
+        return true;
     }
 }
