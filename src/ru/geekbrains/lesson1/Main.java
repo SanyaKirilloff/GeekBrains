@@ -1,70 +1,178 @@
 package ru.geekbrains.lesson1;
 
+import java.util.Random;
+import java.util.Scanner;
+
 public class Main {
+    public static char[][] map;
+    public static final int SIZE = 5;
+    public static final int DOTS_TO_WIN = 5;
+    public static final char DOT_EMPTY = '.';
+    public static final char DOT_X = 'X';
+    public static final char DOT_0 = '0';
+    public static Scanner sc = new Scanner(System.in);
+    public static Random rand = new Random();
 
     public static void main(String[] args) {
-        byte byte1 = 1;
-        short short1 = 10;
-        int int1 = 50;
-        long long1 = 100000L;
-        float float1 = 12.22f;
-        double double1 = 23.23;
-        char char1 = '*';
-        boolean boolean1 = true;
-
-        System.out.println("Результат вычисления: " + expressionResult(32.2f, 10.3f, 49.3f, 5.33f));
-
-        System.out.println(isSumBetween10And20(0, 11));
-
-        int z = -3;
-        isNumberPositiveOrNegative(-3);
-
-        System.out.println(isNumber2PositiveOrNegative(25));
-
-        String name = "Amanda";
-        System.out.println("Привет " + name + "!");
-
-        int year = 2021;
-        isYearLeapOrUsual(2021);
-    }
-
-    public static float expressionResult (float a, float b, float c, float d) {
-        return a * (b + (c / d));
-    }
-
-    public static boolean isSumBetween10And20 (int x, int y) {
-        int sum = x + y;
-        boolean res = sum >10 && sum <= 20;
-        return res;
-    }
-
-    public static void isNumberPositiveOrNegative (int z) {
-        if (z >= 0) {
-            System.out.println("Введенное число " + z + " положительное.");
+        initMap();
+        printMap();
+        while (true) {
+            humanTurn();
+            printMap();
+            if (checkWin(DOT_X)) {
+                System.out.println("Победил человек");
+                break;
+            }
+            if (isMapFull()) {
+                System.out.println("Ничья");
+                break;
+            }
+            aiTUrn();
+            printMap();
+            if (checkWin(DOT_0)) {
+                System.out.println("Победил компьютер");
+                break;
+            }
+            if (isMapFull()) {
+                System.out.println("Ничья");
+                break;
+            }
         }
-        else {
-            System.out.println("Введенное число " + z + " отрицательное.");
+        System.out.println("Игра окончена");
+    }
+
+    public static void initMap() {
+        map = new char[SIZE][SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                map[i][j] = DOT_EMPTY;
+            }
         }
     }
 
-    public static boolean isNumber2PositiveOrNegative (int w) {
-        if (w < 0) {
-            return true;
+    public static void printMap() {
+        for (int i = 0; i <= SIZE; i++) {
+            System.out.print(i + " ");
         }
-        else {
-            return false;
+        System.out.println();
+        for (int i = 0; i < SIZE; i++) {
+            System.out.print((i + 1) + " ");
+            for (int j = 0; j < SIZE; j++) {
+                System.out.print(map[i][j] + " ");
+            }
+            System.out.println();
         }
+        System.out.println();
     }
 
-    public static void printName (String name) {
+    public static void humanTurn() {
+        int x, y;
+        do {
+            System.out.println("Введите координаты X Y");
+            x = sc.nextInt() - 1;
+            y = sc.nextInt() - 1;
+        } while (!isCellValid(x, y));
+        map[y][x] = DOT_X;
     }
 
-    public static void isYearLeapOrUsual (int year) {
-        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
-            System.out.println("Введенный год " + year + " является високосным");
+    public static boolean isCellValid(int x, int y) {
+        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return false;
+        if (map[y][x] == DOT_EMPTY) return true;
+        return false;
         }
-        else {
-            System.out.println("Введенный год " + year + " не является високосным");
+
+    static boolean isWinner(char symb){
+        int endOfOffset = map.length - DOTS_TO_WIN;
+        for (int rowOffset = 0; rowOffset <= endOfOffset; rowOffset++) {
+            if (idDiagonalsFilledWith(symb, rowOffset)) {
+                return true;
+            }
+            for (int columnOffset = 0; columnOffset <= endOfOffset; columnOffset++) {
+                boolean hasWin = isLinesFilledWith(symb, columnOffset, rowOffset);
+                if (hasWin) {
+                    return true;
+                }
+            }
         }
+        return false;
+    }
+
+    static boolean isLinesFilledWith(char symb, int rowOffset, int columnOffset) {
+        for (int row = rowOffset; row < (DOTS_TO_WIN - rowOffset); row++) {
+            int horizontalWinCounter = 0;
+            int verticalWinCounter = 0;
+            for (int column = columnOffset; column < (DOTS_TO_WIN + columnOffset); column++) {
+                if (map[row][column] == symb) {
+                    horizontalWinCounter++;
+                }
+                else {
+                    horizontalWinCounter = 0;
+                }
+                if (map[column][row] == symb) {
+                    verticalWinCounter++;
+                }
+                else {
+                    verticalWinCounter = 0;
+                }
+            }
+            if ((horizontalWinCounter == DOTS_TO_WIN) || (verticalWinCounter == DOTS_TO_WIN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean idDiagonalsFilledWith(char symb, int rowOffset) {
+        int mainDiagonalCounter = 0;
+        int sideDiagonalCounter = 0;
+
+        final int subSquareLength = (DOTS_TO_WIN + rowOffset);
+
+        for (int row = rowOffset; row < subSquareLength; row++) {
+            if (map[row][row] == symb) {
+                mainDiagonalCounter++;
+            }
+            else {
+                mainDiagonalCounter = 0;
+            }
+            if (map[row][map.length -1 - row] == symb) {
+                sideDiagonalCounter++;
+            }
+            else {
+                sideDiagonalCounter = 0;
+            }
+        }
+        return (mainDiagonalCounter == DOTS_TO_WIN) || (sideDiagonalCounter == DOTS_TO_WIN);
+    }
+
+    public static void aiTUrn() {
+        int x, y;
+        do {
+            x = rand.nextInt(SIZE);
+            y = rand.nextInt(SIZE);
+        } while (!isCellValid(x, y));
+        System.out.println("Компьютер походил в точку: " + (x + 1 ) + " " + (y + 1));
+        map[y][x] = DOT_0;
+    }
+
+    public static boolean checkWin(char symb) {
+        if (map[0][0] == symb && map[0][1] == symb && map[0][2] == symb) return true;
+        if (map[1][0] == symb && map[1][1] == symb && map[1][2] == symb) return true;
+        if (map[2][0] == symb && map[2][1] == symb && map[2][2] == symb) return true;
+        if (map[0][0] == symb && map[1][0] == symb && map[2][0] == symb) return true;
+        if (map[0][1] == symb && map[1][1] == symb && map[2][1] == symb) return true;
+        if (map[0][2] == symb && map[1][2] == symb && map[2][2] == symb) return true;
+        if (map[0][0] == symb && map[1][1] == symb && map[2][2] == symb) return true;
+        if (map[2][0] == symb && map[1][1] == symb && map[0][2] == symb) return true;
+        return false;
+    }
+
+    public static boolean isMapFull() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (map[i][j] == DOT_EMPTY) return false;
+            }
+        }
+        return true;
     }
 }
