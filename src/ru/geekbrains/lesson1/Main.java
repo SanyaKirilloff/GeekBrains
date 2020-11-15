@@ -1,70 +1,57 @@
 package ru.geekbrains.lesson1;
 
 public class Main {
-
     public static void main(String[] args) {
-        byte byte1 = 1;
-        short short1 = 10;
-        int int1 = 50;
-        long long1 = 100000L;
-        float float1 = 12.22f;
-        double double1 = 23.23;
-        char char1 = '*';
-        boolean boolean1 = true;
+        Employee[] employees = new Employee[5];
+        employees[0] =
+                new Employee(
+                        "Ivanov Ivan Ivanovich",
+                        "Manager",
+                        "III@mail.ru",
+                        "8-999-111-11-11",
+                        35000,
+                        35);
 
-        System.out.println("Результат вычисления: " + expressionResult(32.2f, 10.3f, 49.3f, 5.33f));
+        employees[1] =
+                new Employee(
+                        "Pavlov Pavel Pavlovich",
+                        "CEO",
+                        "PPP@mail.ru",
+                        "8-999-222-22-22",
+                        350000,
+                        45);
 
-        System.out.println(isSumBetween10And20(0, 11));
+        employees[2] =
+                new Employee(
+                        "Petrov Petr Petrovich",
+                        "CTO",
+                        "PetrovPP@mail.ru",
+                        "8-999-333-33-33",
+                        300000,
+                        36);
 
-        int z = -3;
-        isNumberPositiveOrNegative(-3);
+        employees[3] =
+                new Employee(
+                        "Sidorov Sidor Sidorovich",
+                        "CFO",
+                        "SSS@mail.ru",
+                        "8-999-444-44-44",
+                        320000,
+                        34);
 
-        System.out.println(isNumber2PositiveOrNegative(25));
+        employees[4] =
+                new Employee(
+                       "Fedorov Fedor Fedorovich",
+                       "Engineer",
+                        "FFF@mail.ru",
+                        "8-999-555-55-55",
+                        200000,
+                        38);
 
-        String name = "Amanda";
-        System.out.println("Привет " + name + "!");
-
-        int year = 2021;
-        isYearLeapOrUsual(2021);
-    }
-
-    public static float expressionResult (float a, float b, float c, float d) {
-        return a * (b + (c / d));
-    }
-
-    public static boolean isSumBetween10And20 (int x, int y) {
-        int sum = x + y;
-        boolean res = sum >10 && sum <= 20;
-        return res;
-    }
-
-    public static void isNumberPositiveOrNegative (int z) {
-        if (z >= 0) {
-            System.out.println("Введенное число " + z + " положительное.");
-        }
-        else {
-            System.out.println("Введенное число " + z + " отрицательное.");
-        }
-    }
-
-    public static boolean isNumber2PositiveOrNegative (int w) {
-        if (w < 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    public static void printName (String name) {
-    }
-
-    public static void isYearLeapOrUsual (int year) {
-        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
-            System.out.println("Введенный год " + year + " является високосным");
-        }
-        else {
-            System.out.println("Введенный год " + year + " не является високосным");
+        for (int i = 0; i < employees.length; i++) {
+            if (employees[i].getAge() > 40) {
+                employees[i].info();
+            }
         }
     }
 }
