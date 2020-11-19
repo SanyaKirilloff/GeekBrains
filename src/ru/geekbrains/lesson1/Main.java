@@ -1,70 +1,75 @@
 package ru.geekbrains.lesson1;
 
+import java.util.Random;
+
 public class Main {
-
     public static void main(String[] args) {
-        byte byte1 = 1;
-        short short1 = 10;
-        int int1 = 50;
-        long long1 = 100000L;
-        float float1 = 12.22f;
-        double double1 = 23.23;
-        char char1 = '*';
-        boolean boolean1 = true;
+        Cat cat = new Cat(200, 2);
+        Dog dog = new Dog(500, 10, 0.5f);
 
-        System.out.println("Результат вычисления: " + expressionResult(32.2f, 10.3f, 49.3f, 5.33f));
+        System.out.println("Cat:");
 
-        System.out.println(isSumBetween10And20(0, 11));
+        cat.run(200);
+        cat.run(250);
+        cat.swim(100);
+        cat.jump(1);
+        cat.jump(3);
 
-        int z = -3;
-        isNumberPositiveOrNegative(-3);
+        System.out.println("Dog:");
 
-        System.out.println(isNumber2PositiveOrNegative(25));
+        dog.run(450);
+        dog.run(550);
+        dog.swim(9);
+        dog.swim(100);
+        dog.jump(0.9f);
+        dog.jump(0.1f);
 
-        String name = "Amanda";
-        System.out.println("Привет " + name + "!");
+        Animal newCat = createCat();
+        Animal newDog = createDog();
 
-        int year = 2021;
-        isYearLeapOrUsual(2021);
+        System.out.println("new Cat:");
+
+        System.out.println("Can't swim, max run: " + newCat.maxRunLength + " and max jump: " + newCat.maxJumpHeight);
+
+        newCat.run(200);
+        newCat.run(250);
+        newCat.swim(100);
+        newCat.jump(1);
+        newCat.jump(3);
+
+        System.out.println("new Dog:");
+        System.out.println("max swim: " + newDog.maxSwimLength +", max run: " + newDog.maxRunLength + " and max jump: " + newDog.maxJumpHeight);
+
+
+        newDog.run(450);
+        newDog.run(550);
+        newDog.swim(9);
+        newDog.swim(100);
+        newDog.jump(0.9f);
+        newDog.jump(0.1f);
     }
 
-    public static float expressionResult (float a, float b, float c, float d) {
-        return a * (b + (c / d));
+    static Animal createCat() {
+        Random random = new Random();
+
+        float maxJump = random.nextInt(10) + random.nextFloat();
+        float maxRun = random.nextInt(200) + random.nextFloat();
+
+        Cat cat = new Cat(maxRun, maxJump);
+
+        return cat;
     }
 
-    public static boolean isSumBetween10And20 (int x, int y) {
-        int sum = x + y;
-        boolean res = sum >10 && sum <= 20;
-        return res;
-    }
+    static Animal createDog() {
+        Random random = new Random();
 
-    public static void isNumberPositiveOrNegative (int z) {
-        if (z >= 0) {
-            System.out.println("Введенное число " + z + " положительное.");
-        }
-        else {
-            System.out.println("Введенное число " + z + " отрицательное.");
-        }
-    }
+        float maxJump = random.nextInt(10) + random.nextFloat();
+        float maxRun = random.nextInt(200) + random.nextFloat();
+        float maxSwim = random.nextInt(50) + random.nextFloat();
 
-    public static boolean isNumber2PositiveOrNegative (int w) {
-        if (w < 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
-    public static void printName (String name) {
-    }
+        Dog dog = new Dog(maxRun, maxSwim, maxJump);
 
-    public static void isYearLeapOrUsual (int year) {
-        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
-            System.out.println("Введенный год " + year + " является високосным");
-        }
-        else {
-            System.out.println("Введенный год " + year + " не является високосным");
-        }
+        return dog;
     }
 }
