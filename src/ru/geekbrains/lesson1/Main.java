@@ -1,57 +1,75 @@
 package ru.geekbrains.lesson1;
 
+import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
-        Employee[] employees = new Employee[5];
-        employees[0] =
-                new Employee(
-                        "Ivanov Ivan Ivanovich",
-                        "Manager",
-                        "III@mail.ru",
-                        "8-999-111-11-11",
-                        35000,
-                        35);
+        Cat cat = new Cat(200, 2);
+        Dog dog = new Dog(500, 10, 0.5f);
 
-        employees[1] =
-                new Employee(
-                        "Pavlov Pavel Pavlovich",
-                        "CEO",
-                        "PPP@mail.ru",
-                        "8-999-222-22-22",
-                        350000,
-                        45);
+        System.out.println("Cat:");
 
-        employees[2] =
-                new Employee(
-                        "Petrov Petr Petrovich",
-                        "CTO",
-                        "PetrovPP@mail.ru",
-                        "8-999-333-33-33",
-                        300000,
-                        36);
+        cat.run(200);
+        cat.run(250);
+        cat.swim(100);
+        cat.jump(1);
+        cat.jump(3);
 
-        employees[3] =
-                new Employee(
-                        "Sidorov Sidor Sidorovich",
-                        "CFO",
-                        "SSS@mail.ru",
-                        "8-999-444-44-44",
-                        320000,
-                        34);
+        System.out.println("Dog:");
 
-        employees[4] =
-                new Employee(
-                       "Fedorov Fedor Fedorovich",
-                       "Engineer",
-                        "FFF@mail.ru",
-                        "8-999-555-55-55",
-                        200000,
-                        38);
+        dog.run(450);
+        dog.run(550);
+        dog.swim(9);
+        dog.swim(100);
+        dog.jump(0.9f);
+        dog.jump(0.1f);
 
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i].getAge() > 40) {
-                employees[i].info();
-            }
-        }
+        Animal newCat = createCat();
+        Animal newDog = createDog();
+
+        System.out.println("new Cat:");
+
+        System.out.println("Can't swim, max run: " + newCat.maxRunLength + " and max jump: " + newCat.maxJumpHeight);
+
+        newCat.run(200);
+        newCat.run(250);
+        newCat.swim(100);
+        newCat.jump(1);
+        newCat.jump(3);
+
+        System.out.println("new Dog:");
+        System.out.println("max swim: " + newDog.maxSwimLength +", max run: " + newDog.maxRunLength + " and max jump: " + newDog.maxJumpHeight);
+
+
+        newDog.run(450);
+        newDog.run(550);
+        newDog.swim(9);
+        newDog.swim(100);
+        newDog.jump(0.9f);
+        newDog.jump(0.1f);
+    }
+
+    static Animal createCat() {
+        Random random = new Random();
+
+        float maxJump = random.nextInt(10) + random.nextFloat();
+        float maxRun = random.nextInt(200) + random.nextFloat();
+
+        Cat cat = new Cat(maxRun, maxJump);
+
+        return cat;
+    }
+
+    static Animal createDog() {
+        Random random = new Random();
+
+        float maxJump = random.nextInt(10) + random.nextFloat();
+        float maxRun = random.nextInt(200) + random.nextFloat();
+        float maxSwim = random.nextInt(50) + random.nextFloat();
+
+
+        Dog dog = new Dog(maxRun, maxSwim, maxJump);
+
+        return dog;
     }
 }
