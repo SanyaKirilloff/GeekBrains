@@ -1,75 +1,28 @@
 package ru.geekbrains.lesson1;
 
-import java.util.Random;
+import java.lang.management.PlatformLoggingMXBean;
 
 public class Main {
     public static void main(String[] args) {
-        Cat cat = new Cat(200, 2);
-        Dog dog = new Dog(500, 10, 0.5f);
+        Cat[] cats = new Cat[3];
+        cats[0] = new Cat("Vas'ka", 6);
+        cats[1] = new Cat("Dusya", 4);
+        cats[2] = new Cat("Markiz", 10);
 
-        System.out.println("Cat:");
+        Plate plate = new Plate(20);
 
-        cat.run(200);
-        cat.run(250);
-        cat.swim(100);
-        cat.jump(1);
-        cat.jump(3);
+        for (int cat = 0; cat < cats.length; cat++) {
+            cats[cat].eat(plate);
+        }
 
-        System.out.println("Dog:");
+        appendFoodTo(plate, 50);
 
-        dog.run(450);
-        dog.run(550);
-        dog.swim(9);
-        dog.swim(100);
-        dog.jump(0.9f);
-        dog.jump(0.1f);
-
-        Animal newCat = createCat();
-        Animal newDog = createDog();
-
-        System.out.println("new Cat:");
-
-        System.out.println("Can't swim, max run: " + newCat.maxRunLength + " and max jump: " + newCat.maxJumpHeight);
-
-        newCat.run(200);
-        newCat.run(250);
-        newCat.swim(100);
-        newCat.jump(1);
-        newCat.jump(3);
-
-        System.out.println("new Dog:");
-        System.out.println("max swim: " + newDog.maxSwimLength +", max run: " + newDog.maxRunLength + " and max jump: " + newDog.maxJumpHeight);
-
-
-        newDog.run(450);
-        newDog.run(550);
-        newDog.swim(9);
-        newDog.swim(100);
-        newDog.jump(0.9f);
-        newDog.jump(0.1f);
+        for (int cat = 0; cat < cats.length; cat++) {
+            cats[cat].eat(plate);
+        }
     }
 
-    static Animal createCat() {
-        Random random = new Random();
-
-        float maxJump = random.nextInt(10) + random.nextFloat();
-        float maxRun = random.nextInt(200) + random.nextFloat();
-
-        Cat cat = new Cat(maxRun, maxJump);
-
-        return cat;
-    }
-
-    static Animal createDog() {
-        Random random = new Random();
-
-        float maxJump = random.nextInt(10) + random.nextFloat();
-        float maxRun = random.nextInt(200) + random.nextFloat();
-        float maxSwim = random.nextInt(50) + random.nextFloat();
-
-
-        Dog dog = new Dog(maxRun, maxSwim, maxJump);
-
-        return dog;
+    static void appendFoodTo(Plate plate, int food) {
+        plate.increaseFood(food);
     }
 }
